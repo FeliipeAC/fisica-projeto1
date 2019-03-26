@@ -1,0 +1,23 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+body {
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  padding: 0;
+  margin: 0;
+}
+ngx-charts-legend {
+  .legend-labels {
+    background-color: transparent !important;
+  }
+
+  .legend-label {
+    color: #404040 !important;
+    margin: 12px 8px;
+  }
+  .legend-label-text {
+    font-size: 13px !important;
+  }
+}

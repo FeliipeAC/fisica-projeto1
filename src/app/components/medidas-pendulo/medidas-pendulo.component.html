@@ -1,0 +1,16 @@
+<h2>Dados referentes as medidas feita com o pêndulo</h2>
+<div class="coluna">
+  <div class="tabela">
+    <app-tabela></app-tabela>
+  </div>
+
+  <div class="grafico">
+    <app-grafico (element)="getValueGrafico($event)"></app-grafico>
+  </div>
+
+  <div class="pendulo">
+    <!--<img src="../assets/pendulo.gif" alt="">-->
+    <app-pendulo *ngIf="valores" (eventAnimation)="getStatusAnimation($event)" [setDados]="valores"></app-pendulo>
+  </div>
+
+</div>
