@@ -1,0 +1,30 @@
+<div class="pendulo-content">
+
+  <div class="base">
+    <div class="holder"></div>
+    <div class="thread" [ngStyle]="setAnimation && {'animation-name': 'moveIt', 'animation-duration.s': dados?.tempo/5,
+    'animation-iteration-count': '6', 'animation-timing-function': 'ease-in-out'}">
+      <div class="knob"></div>
+      <div class="pendulum"></div>
+    </div>
+    <div class="shadow" [ngStyle]="setAnimation && {'animation-name': 'moveShade', 'animation-duration.s': dados?.tempo/10,
+    'animation-iteration-count': '12', 'animation-timing-function': 'ease-in-out', 'animation-direction': 'alternate'}">
+    </div>
+  </div>
+
+  <div class="altura" *ngIf="dados">
+    <div class="top">
+      <span></span>
+    </div>
+    <div class="center">{{dados.altura ? dados.altura : 'Altura'}}</div>
+    <div class="bottom">
+      <span></span>
+    </div>
+  </div>
+
+  <div class="cronometro">
+    <img src="../../../assets/time.svg" alt="">
+    <span>{{seg < 10 ? '0' + seg : seg}}:{{mseg < 10 ? '0' + mseg : mseg}}</span>
+  </div>
+</div>
+

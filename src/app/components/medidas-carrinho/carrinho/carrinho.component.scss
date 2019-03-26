@@ -1,0 +1,94 @@
+.coluna {
+  padding: 45px 0;
+  display: flex;
+  flex-wrap: wrap;
+
+  .espaco {
+    flex: 0 1 50%;
+    width: 50%;
+
+    position: relative;
+    //transform: rotate(2deg);
+
+    .rampa {
+      border-bottom: 5px solid;
+      transform: rotate(2deg);
+
+      .carrinho {
+        width: 80px;
+        height: 50px;
+        background: #ddd;
+        animation: move 7s ease-in-out 1;
+        //margin-left: 200px;
+        transform: translateX(500px);
+      }
+    }
+
+
+    .sensor {
+      height: 80px;
+      width: 40px;
+      position: absolute;
+      bottom: 0px;
+      border-top: 4px solid;
+
+      span {
+        display: block;
+        background: black;
+        height: 80px;
+        width: 4px;
+        margin: auto;
+      }
+    }
+
+    .s1 {
+      margin-left: 90px;
+    }
+
+    .s2 {
+      margin-left: 230px;
+    }
+
+    .s3 {
+      margin-left: 310px;
+    }
+
+    .s4 {
+      margin-left: 450px;
+    }
+
+    .comprimento {
+      position: absolute;
+      bottom: -30px;
+      width: 100%;
+      border-right: 1px solid #505050;
+      border-left: 1px solid #505050;
+
+      .bar {
+        width: 45%;
+        height: 1px;
+        display: inline-block;
+        background: #505050;
+        vertical-align: middle;
+      }
+
+      .text {
+        display: inline-block;
+        width: 10%;
+        text-align: center;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@keyframes move {
+
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(500px);
+  }
+}
