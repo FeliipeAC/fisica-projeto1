@@ -1,9 +1,10 @@
 <div class="grafico-content">
-
+  <h2>Crescimento do período em função da altura</h2>
   <ngx-charts-line-chart
+    *ngIf="dataChat"
     [view]="view"
     [scheme]="colorScheme"
-    [results]="data"
+    [results]="dataChat"
     [gradient]="gradient"
     [xAxis]="showXAxis"
     [yAxis]="showYAxis"
@@ -23,7 +24,7 @@
         <!--<span>{{ model.series }}</span>-->
         <ul>
           <li><span>Altura:</span> {{ model.name }} m</li>
-          <li><span>Tempo:</span> {{ model.value }} s</li>
+          <li><span>Período:</span> {{ model.value }} s</li>
         </ul>
 
 
