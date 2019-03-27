@@ -15,10 +15,10 @@ export class GraficoComponent implements OnInit {
   showXAxis = true;
   showYAxis = true;
   gradient = false;
-  showLegend = true;
+  showLegend = false;
   autoScale = false;
   showXAxisLabel = true;
-  xAxisLabel = 'Verificações';
+  xAxisLabel = 'Altura(m)';
   showYAxisLabel = true;
   yAxisLabel = 'Tempo (s)';
   timeline = false;
@@ -43,11 +43,7 @@ export class GraficoComponent implements OnInit {
       cor2: ''
     },
     103.9: {
-<<<<<<< HEAD
-      cor1: '#ddd',
-=======
       cor1: '',
->>>>>>> 3f8de110d0845d1318ff54046d5afe5b2cdd7dd3
       cor2: ''
     },
     116.3: {
@@ -165,6 +161,124 @@ export class GraficoComponent implements OnInit {
     },
   ];
 
+  data: any[] = [
+    {
+      name: 'Altura/Tempo',
+      series: [
+        {
+          name: 0.14,
+          value: 3.50
+        },
+        {
+          name: 0.263,
+          value: 4.97
+        },
+        {
+          name: 0.431,
+          value: 6.26
+        },
+
+        {
+          name: 0.89,
+          value: 9.12
+        },
+        {
+          name: 1.039,
+          value: 9.9
+        },
+        {
+          name: 1.161,
+          value: 10.53
+        },
+      ]
+    },
+    // {
+    //   name: '26.3 cm',
+    //   series: [
+    //     {
+    //       name: 'Primeira',
+    //       value: 5.06
+    //     },
+    //     {
+    //       name: 'Segunda',
+    //       value: 4.88
+    //     },
+    //     {
+    //       name: 'Terceira',
+    //       value: 4.98
+    //     },
+    //   ]
+    // },
+    // {
+    //   name: '43.1 cm',
+    //   series: [
+    //     {
+    //       name: 'Primeira',
+    //       value: 6.17
+    //     },
+    //     {
+    //       name: 'Segunda',
+    //       value: 6.30
+    //     },
+    //     {
+    //       name: 'Terceira',
+    //       value: 6.31
+    //     },
+    //   ]
+    // },
+    // {
+    //   name: '89.0 cm',
+    //   series: [
+    //     {
+    //       name: 'Primeira',
+    //       value: 8.92
+    //     },
+    //     {
+    //       name: 'Segunda',
+    //       value: 9.12
+    //     },
+    //     {
+    //       name: 'Terceira',
+    //       value: 9.33
+    //     },
+    //   ]
+    // },
+    // {
+    //   name: '103.9 cm',
+    //   series: [
+    //     {
+    //       name: 'Primeira',
+    //       value: 9.90
+    //     },
+    //     {
+    //       name: 'Segunda',
+    //       value: 9.82
+    //     },
+    //     {
+    //       name: 'Terceira',
+    //       value: 9.98
+    //     },
+    //   ]
+    // },
+    // {
+    //   name: '116.3 cm',
+    //   series: [
+    //     {
+    //       name: 'Primeira',
+    //       value: 10.62
+    //     },
+    //     {
+    //       name: 'Segunda',
+    //       value: 10.56
+    //     },
+    //     {
+    //       name: 'Terceira',
+    //       value: 10.43
+    //     },
+    //   ]
+    // },
+  ];
+
   @Output() element = new EventEmitter();
   @Input() disabledAnimation;
 
@@ -173,7 +287,7 @@ export class GraficoComponent implements OnInit {
 
   /**
    * Dispara evento para animação do pêndulo
-   * @param event
+   *
    */
   onSelect(event): void {
     console.log('Event: ', event);

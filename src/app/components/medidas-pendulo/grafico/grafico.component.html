@@ -3,7 +3,7 @@
   <ngx-charts-line-chart
     [view]="view"
     [scheme]="colorScheme"
-    [results]="multi"
+    [results]="data"
     [gradient]="gradient"
     [xAxis]="showXAxis"
     [yAxis]="showYAxis"
@@ -20,8 +20,13 @@
 
     <ng-template #tooltipTemplate let-model="model">
       <div class="tt">
-        <span>{{ model.series }}</span>
-        {{ model.name }} verificação: {{ model.value }}s
+        <!--<span>{{ model.series }}</span>-->
+        <ul>
+          <li><span>Altura:</span> {{ model.name }} m</li>
+          <li><span>Tempo:</span> {{ model.value }} s</li>
+        </ul>
+
+
       </div>
     </ng-template>
 
@@ -30,7 +35,7 @@
         <span [ngStyle]="{'background-color': colorScheme.domain[i]}"></span>
         <strong>{{ item.series }}:</strong> &nbsp;{{ item.value }}s
       </div>
-      </ng-template>
+    </ng-template>
   </ngx-charts-line-chart>
 
 </div>
