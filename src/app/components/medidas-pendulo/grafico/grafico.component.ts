@@ -43,7 +43,11 @@ export class GraficoComponent implements OnInit {
       cor2: ''
     },
     103.9: {
+<<<<<<< HEAD
       cor1: '#ddd',
+=======
+      cor1: '',
+>>>>>>> 3f8de110d0845d1318ff54046d5afe5b2cdd7dd3
       cor2: ''
     },
     116.3: {
