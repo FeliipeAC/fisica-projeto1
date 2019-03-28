@@ -230,15 +230,15 @@ export class GraficoComponent implements OnInit {
    *
    */
   onSelect(event): void {
-    console.log('Event: ', event);
-    console.log('Cores: ', this.cores);
-
-    // Verifica se event é tipo Object
-    if (typeof event === 'object') {
-
-      // Emite evento com os dados para animação do pêndulo
-      this.element.emit({altura: event.series, tempo: event.value});
-    }
+    // console.log('Event: ', event);
+    // console.log('Cores: ', this.cores);
+    //
+    // // Verifica se event é tipo Object
+    // if (typeof event === 'object') {
+    //
+    //   // Emite evento com os dados para animação do pêndulo
+    //   this.element.emit({altura: event.series, tempo: event.value});
+    // }
   }
 
 
@@ -250,14 +250,14 @@ export class GraficoComponent implements OnInit {
 
     this.dataChat = [
       {
-        name: 'Perido/Tempo',
+        name: 'Período',
         series: []
       }
     ];
 
     for (let i = 0; i < this.medidas.length; i++) {
       this.dataChat[0].series[i] = {
-        name: this.medidas[i].altura / 100,
+        name: parseFloat((this.medidas[i].altura / 100).toFixed(3)),
         value: this.calculaPeriodo(this.medidas[i].altura / 100)
       };
     }
