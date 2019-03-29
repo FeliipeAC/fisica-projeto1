@@ -34,6 +34,9 @@ export class GraficosComponent implements OnInit {
   xAxisLabelAce = 'Tempo(s)';
   yAxisLabelAce = 'Aceleração(m/s²)';
 
+  xAxisLabelDesl = 'Tempo(s)';
+  yAxisLabelDesl = 'Deslocamento(m)';
+
   /**
    * Cores do gráfico
    */
@@ -73,6 +76,10 @@ export class GraficosComponent implements OnInit {
    */
   dataChartAce;
 
+  /**
+   * Dados do gráfico de deslocamento
+   */
+  dataChartDesl;
 
   /**
    * Gravidade (m/s³)
@@ -85,7 +92,8 @@ export class GraficosComponent implements OnInit {
   ngOnInit() {
     console.log('Carrinho plano: ', this.plano);
     this.setVelocidadeMedia();
-    this.setAceleracaoMedia();
+    // this.setAceleracaoMedia();
+    this.setTempoPorDeslocamento();
   }
 
   setVelocidadeMedia(): void {
@@ -95,23 +103,21 @@ export class GraficosComponent implements OnInit {
         series: []
       }
     ];
-    for (let i = 0; i < this.plano.length; i++) {
-      const vm = this.plano[i].distancia / this.plano[i].tempo;
-      // if (i === 0) {
-      this.dataChartVel[0].series[i] = {
-        value: parseFloat((this.plano[i].distancia / this.plano[i].tempo).toFixed(2)),
-        name: this.plano[i].tempo
-      };
-      // } else {
-      //   const dX = this.plano[i].distancia - this.plano[i - 1].distancia;
-      //   const dT = this.plano[i].tempo - this.plano[i - 1].tempo;
-      //
-      //   this.dataChartVel[0].series[i] = {
-      //     value: parseFloat((dX / dT).toFixed(2)),
-      //     name: this.plano[i].tempo
-      //   };
-      // }
-    }
+    // for (let i = 0; i < this.plano.length; i++) {
+    //   const vm = this.plano[i].distancia / this.plano[i].tempo;
+    //   this.dataChartVel[0].series[i] = {
+    //     value: parseFloat((this.plano[i].distancia / this.plano[i].tempo).toFixed(2)),
+    //     name: this.plano[i].tempo
+    //   };
+    // }
+    this.dataChartVel[0].series[0] = {
+      value: parseFloat((this.plano[3].distancia / this.plano[3].tempo).toFixed(2)),
+      name: this.plano[3].tempo
+    };
+    this.dataChartVel[0].series[1] = {
+      value: parseFloat((this.plano[3].distancia / this.plano[3].tempo).toFixed(2)),
+      name: this.plano[0].tempo
+    };
     console.log('Data Velocidade: ', this.dataChartVel);
   }
 
@@ -132,6 +138,23 @@ export class GraficosComponent implements OnInit {
 
     }
     console.log('Data Aceleração: ', this.dataChartAce);
+  }
+
+  setTempoPorDeslocamento(): void {
+    this.dataChartDesl = [
+      {
+        name: 'Distância',
+        series: []
+      }
+    ];
+    for (let i = 0; i < this.plano.length; i++) {
+
+      this.dataChartDesl[0].series[i] = {
+        value: this.plano[i].distancia,
+        name: this.plano[i].tempo
+      };
+    }
+    console.log('Deslocamento: ', this.dataChartDesl);
   }
 
 }
