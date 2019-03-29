@@ -1,0 +1,81 @@
+<div class="content">
+  <div class="grafico">
+    <h2>Velocidade média ao decorrer do tempo</h2>
+    <ngx-charts-line-chart
+      *ngIf="dataChartVel"
+      [view]="view"
+      [scheme]="colorScheme"
+      [results]="dataChartVel"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="showYAxis"
+      [legend]="showLegend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabelVel"
+      [yAxisLabel]="yAxisLabelVel"
+      [autoScale]="autoScale"
+      [legendTitle]="legendTitle"
+      [timeline]="timeline"
+      [curve]="curveType">
+
+      <ng-template #tooltipTemplate let-model="model">
+        <div class="tt">
+          <!--<span>{{ model.series }}</span>-->
+          <ul>
+            <li><span>Tempo:</span> {{ model.name }} s</li>
+            <li><span>Velocidade média:</span> {{ model.value }} m/s</li>
+          </ul>
+
+        </div>
+      </ng-template>
+
+      <ng-template #seriesTooltipTemplate let-model="model">
+        <div class="tt2" *ngFor="let item of model; let i = index">
+          <span [ngStyle]="{'background-color': colorScheme.domain[i]}"></span>
+          <strong>{{ item.series }}:</strong> &nbsp;{{ item.value }} m/s
+        </div>
+      </ng-template>
+    </ngx-charts-line-chart>
+  </div>
+
+  <div class="grafico">
+    <h2>Aceleração média ao decorrer do tempo</h2>
+    <ngx-charts-line-chart
+      *ngIf="dataChartAce"
+      [view]="view"
+      [scheme]="colorScheme"
+      [results]="dataChartAce"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="showYAxis"
+      [legend]="showLegend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabelAce"
+      [yAxisLabel]="yAxisLabelAce"
+      [autoScale]="autoScale"
+      [legendTitle]="legendTitle"
+      [timeline]="timeline"
+      [curve]="curveType">
+
+      <ng-template #tooltipTemplate let-model="model">
+        <div class="tt">
+          <!--<span>{{ model.series }}</span>-->
+          <ul>
+            <li><span>Tempo:</span> {{ model.name }} s</li>
+            <li><span>Aceleração média:</span> {{ model.value }} m/s²</li>
+          </ul>
+
+        </div>
+      </ng-template>
+
+      <ng-template #seriesTooltipTemplate let-model="model">
+        <div class="tt2" *ngFor="let item of model; let i = index">
+          <span [ngStyle]="{'background-color': colorScheme.domain[i]}"></span>
+          <strong>{{ item.series }}:</strong> &nbsp;{{ item.value }} m/s²
+        </div>
+      </ng-template>
+    </ngx-charts-line-chart>
+  </div>
+</div>

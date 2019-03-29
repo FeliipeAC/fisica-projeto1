@@ -1,4 +1,18 @@
 h2 {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   color: #131313;
+}
+
+h3 {
+  font-size: 1.2rem;
+  color: #131313;
+}
+
+.content {
+  display: flex;
+
+  .coluna {
+    flex: 0 1 50%;
+    padding: 10px 20px;
+  }
 }

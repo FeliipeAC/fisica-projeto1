@@ -1,26 +1,26 @@
 <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <!-- Position Column -->
   <ng-container matColumnDef="altura">
-    <mat-header-cell *matHeaderCellDef> Altura</mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.altura}} cm </mat-cell>
+    <mat-header-cell *matHeaderCellDef> Altura (m)</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.altura}} </mat-cell>
   </ng-container>
 
   <!-- Name Column -->
   <ng-container matColumnDef="tempo1">
-    <mat-header-cell *matHeaderCellDef> Primeira verificação</mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.tempo1}}s </mat-cell>
+    <mat-header-cell *matHeaderCellDef> Tempo 1 (s)</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.tempo1}} </mat-cell>
   </ng-container>
 
   <!-- Weight Column -->
   <ng-container matColumnDef="tempo2">
-    <mat-header-cell *matHeaderCellDef> Segunda verificação</mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.tempo2}}s </mat-cell>
+    <mat-header-cell *matHeaderCellDef> Tempo 2 (s)</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.tempo2}} </mat-cell>
   </ng-container>
 
   <!-- Symbol Column -->
   <ng-container matColumnDef="tempo3">
-    <mat-header-cell *matHeaderCellDef> Terceira verificação</mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.tempo3}}s </mat-cell>
+    <mat-header-cell *matHeaderCellDef> Tempo 3 (s)</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.tempo3}} </mat-cell>
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

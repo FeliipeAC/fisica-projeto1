@@ -6,6 +6,8 @@ h2 {
 .coluna {
   display: flex;
   flex-wrap: wrap;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
 
   .grafico {
     flex: 1 0 65%;
