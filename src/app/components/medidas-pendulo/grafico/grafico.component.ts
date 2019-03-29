@@ -94,7 +94,7 @@ export class GraficoComponent implements OnInit {
   @Input() disabledAnimation;
 
   constructor() {
-    console.log('Medidas: ', this.medidas);
+    // console.log('Medidas: ', this.medidas);
   }
 
   /**
@@ -133,16 +133,14 @@ export class GraficoComponent implements OnInit {
         value: this.calculaPeriodo(this.medidas[i].altura / 100)
       };
     }
-    console.log('Dados do gráfico: ', this.dataChat);
+    // console.log('Dados do gráfico: ', this.dataChat);
 
   }
 
   calculaPeriodo(altura: number): number {
     const valor = (2 * Math.PI * Math.sqrt(altura / this.g));
-    console.log('Periodo: ', valor);
-    // parseFloat(valor.toFixed(2));
+    // console.log('Periodo: ', valor);
     return parseFloat(valor.toFixed(2));
-    // return valor;
   }
 
 }

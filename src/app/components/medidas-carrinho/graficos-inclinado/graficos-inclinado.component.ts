@@ -90,8 +90,35 @@ export class GraficosInclinadoComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setVelocidadeMedia();
     this.setTempoPorDeslocamento();
   }
+
+  setVelocidadeMedia(): void {
+    this.dataChartVel = [
+      {
+        name: 'Velocidade média',
+        series: []
+      }
+    ];
+    for (let i = 0; i < this.inclinado.length; i++) {
+      const vm = this.inclinado[i].distancia / this.inclinado[i].tempo;
+      this.dataChartVel[0].series[i] = {
+        value: parseFloat((this.inclinado[i].distancia / this.inclinado[i].tempo).toFixed(2)),
+        name: this.inclinado[i].tempo
+      };
+    }
+    // this.dataChartVel[0].series[0] = {
+    //   value: parseFloat((this.inclinado[3].distancia / this.inclinado[3].tempo).toFixed(2)),
+    //   name: this.inclinado[3].tempo
+    // };
+    // this.dataChartVel[0].series[1] = {
+    //   value: parseFloat((this.inclinado[3].distancia / this.inclinado[3].tempo).toFixed(2)),
+    //   name: this.inclinado[0].tempo
+    // };
+    // console.log('Data Velocidade: ', this.dataChartVel);
+  }
+
 
   setTempoPorDeslocamento(): void {
     this.dataChartDesl = [
@@ -107,7 +134,7 @@ export class GraficosInclinadoComponent implements OnInit {
         name: this.inclinado[i].tempo
       };
     }
-    console.log('Deslocamento: ', this.dataChartDesl);
+    // console.log('Deslocamento: ', this.dataChartDesl);
   }
 
 }
