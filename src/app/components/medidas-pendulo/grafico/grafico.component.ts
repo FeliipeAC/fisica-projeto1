@@ -12,7 +12,7 @@ export class GraficoComponent implements OnInit {
   /**
    * Dimensões do gráfico
    */
-  view: any[] = [700, 400];
+  view: any[] = [520, 400];
 
   /**
    * Configurações do gráfico

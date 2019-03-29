@@ -12,7 +12,7 @@ export class GraficosInclinadoComponent implements OnInit {
   /**
    * Dimensões do gráfico
    */
-  view: any[] = [600, 400];
+  view: any[] = [520, 400];
 
   /**
    * Configurações do gráfico
