@@ -18,7 +18,7 @@ import {GraficosInclinadoModule} from './graficos-inclinado/graficos-inclinado.m
     GraficosModule,
     GraficosInclinadoModule,
     TabelaPlanoModule,
-    TabelaInclinadoModule
+    TabelaInclinadoModule,
   ],
   exports: [
     MedidasCarrinhoComponent
