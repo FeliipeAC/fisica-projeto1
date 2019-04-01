@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as shape from 'd3-shape';
 
 const Highcharts = require('highcharts');
@@ -50,7 +50,7 @@ export class GraficosComponent implements OnInit {
     /**
     * Dados da medida
     */
-    plano = [
+    plano: { distancia: number, tempo: number }[] = [
         {
             distancia: 0.21,
             tempo: 0.297,
@@ -97,6 +97,11 @@ export class GraficosComponent implements OnInit {
     listaVelocidade = [];
 
     /**
+    * Lista com os dados do gráfico de velocidade média
+    */
+    listaAceleracao = [];
+
+    /**
     * Lista com os dados do gráfico de posição x tempo
     */
     listaTempo = [];
@@ -120,6 +125,7 @@ export class GraficosComponent implements OnInit {
 
         this.graficoPosicaoTempo();
         this.graficoVelocidadeMedia();
+        this.graficoAceleracaoMedia();
     }
 
     setAceleracaoMedia(): void {
@@ -346,5 +352,112 @@ export class GraficosComponent implements OnInit {
         Highcharts.chart('grafico-velocidade-media', objGrafico);
     }
 
+
+    /**
+* Cria o gráfico com o cálculo da velocidade média
+*/
+    graficoAceleracaoMedia(): void {
+
+        // Objeto com as configurações do gráfico
+        const objGrafico = {
+
+            title: {
+                text: 'Aceleração média',
+                style: {
+                    fontSize: '16px',
+                    color: '#404040',
+                    fontWeight: 'bold',
+                    fontFamily: 'Roboto, sans-serif'
+                }
+            },
+
+            subtitle: {
+                text: 'Aceleração média do carrinho durante o deslocamento',
+                // align: 'left'
+                style: {
+                    fontSize: '14px',
+                    fontFamily: 'Roboto, sans-serif'
+                }
+            },
+
+            xAxis: {
+                title: {
+                    text: 'Tempo (s)'
+                }
+            },
+
+            yAxis: {
+                title: {
+                    text: 'Aceleração (m/s²)'
+                },
+                min: 0
+            },
+            legend: {
+                enabled: false,
+                // layout: 'vertical',
+                // align: 'right',
+                // verticalAlign: 'middle'
+            },
+
+            tooltip: {
+                headerFormat: ' <span style="font-size: 10px">{point.key} s</span><br/>',
+                valueSuffix: ' m/s'
+            },
+
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                    pointStart: 0
+                }
+            },
+
+            series: [],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        // legend: {
+                        //   layout: 'horizontal',
+                        //   align: 'left',
+                        //   verticalAlign: 'top'
+                        // }
+                    }
+                }]
+            },
+
+            credits: {
+                enabled: false,
+            }
+
+        };
+
+        // Tamanho da lista com as medidas
+        const max = this.plano.length;
+
+        // Monta lista com os cálculos da velocidade média
+        for (let i = 0; i < max; i++) {
+            const point = [];
+            point.push(this.plano[i].tempo);
+            point.push(parseFloat((this.listaVelocidade[i][1] / this.plano[i].tempo).toFixed(3)));
+            this.listaAceleracao.push(point);
+        }
+
+
+        // Adiciona os dados no objeto do gráfico
+        objGrafico.series.push({
+            name: 'Velocidade média',
+            data: this.listaAceleracao
+        });
+
+        console.log('aceleracao plano', this.listaAceleracao);
+
+        // Cria o gráfico
+        Highcharts.chart('grafico-aceleracao-media', objGrafico);
+    }
 
 }
