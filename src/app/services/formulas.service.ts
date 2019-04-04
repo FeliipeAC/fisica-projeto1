@@ -13,20 +13,24 @@ export class FormulasService {
     this.pi = 3.14;
   }
 
-  velocidadeMedia(deltaX: number, deltaT: number) {
-    return (deltaX / deltaT);
+  velocidadeMedia(pInicial: number, pFinal: number, tInicial: number, tFinal: number) {
+    const p = pFinal - pInicial;
+    const t = tFinal - tInicial;
+    return parseFloat((p / t).toFixed(3));
   }
 
-  aceleracaoMedia(deltaV: number, deltaT: number) {
-    return (deltaV / deltaT);
+  aceleracaoMedia(vInicial: number, vFinal: number, tInicial: number, tFinal: number) {
+    const v = vFinal - vInicial;
+    const t = tFinal - tInicial;
+    return parseFloat((v / t).toFixed(3));
   }
 
   energiaPotencial(massa: number, altura: number) {
-    return (massa * this.gravidade * altura);
+    return parseFloat((massa * this.gravidade * altura).toFixed(3));
   }
 
   energiaCinetica(massa: number, velocidade: number) {
-    return (massa * velocidade * velocidade) / 2;
+    return parseFloat(((massa * velocidade * velocidade) / 2).toFixed(3));
   }
 
   // Pêndulo

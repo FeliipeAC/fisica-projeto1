@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as shape from 'd3-shape';
+import { FormulasService } from 'src/app/services/formulas.service';
 
 const Highcharts = require('highcharts');
 require('highcharts/modules/exporting')(Highcharts);
@@ -104,7 +105,39 @@ export class GraficosInclinadoComponent implements OnInit {
   */
   listaAceleracao = [];
 
-  constructor() {
+  /**
+   * Média das acelerações
+   */
+  aceleracaoMedia = 0;
+
+  /**
+   * Massa do carrinho
+   */
+  massa = 0.21; // kg
+
+  /**
+   * Altura incial 
+   */
+  alturaInicial = 0.165; // m
+
+  /**
+   * Altura final
+   */
+  alturaFinal = 0.133; // m
+
+  /**
+   * Altura para cada ponto de parada
+   */
+  alturas = [
+    0.030,
+    0.024,
+    0.015,
+    0.006,
+  ];
+
+  constructor(
+    private formulasService: FormulasService,
+  ) {
 
     // Traduzindo alguns textos do modulo de gráfico
     Highcharts.setOptions({
@@ -127,6 +160,8 @@ export class GraficosInclinadoComponent implements OnInit {
     this.graficoVelocidadeMedia();
 
     this.graficoAceleracaoMedia();
+
+    this.graficoPotencial();
   }
 
   /**
@@ -159,7 +194,9 @@ export class GraficosInclinadoComponent implements OnInit {
       xAxis: {
         title: {
           text: 'Tempo (s)'
-        }
+        },
+        min: 0,
+        max: 5
       },
 
       yAxis: {
@@ -297,13 +334,6 @@ export class GraficosInclinadoComponent implements OnInit {
           condition: {
             maxWidth: 500
           },
-          chartOptions: {
-            // legend: {
-            //   layout: 'horizontal',
-            //   align: 'left',
-            //   verticalAlign: 'top'
-            // }
-          }
         }]
       },
 
@@ -329,7 +359,7 @@ export class GraficosInclinadoComponent implements OnInit {
       name: 'Velocidade média',
       data: this.listaVelocidade
     });
-    console.log('Velocidade média: ', this.listaVelocidade);
+    // console.log('Velocidade média: ', this.listaVelocidade);
 
     // Cria o gráfico
     Highcharts.chart('grafico-inclinado-velocidade-media', objGrafico);
@@ -366,14 +396,17 @@ export class GraficosInclinadoComponent implements OnInit {
       xAxis: {
         title: {
           text: 'Tempo (s)'
-        }
+        },
+        // min: 0,
+        // max: 5
       },
 
       yAxis: {
         title: {
           text: 'Aceleração (m/s²)'
         },
-        min: 0
+        min: 0,
+        max: 0.2
       },
 
       legend: {
@@ -423,25 +456,172 @@ export class GraficosInclinadoComponent implements OnInit {
     // Tamanho da lista com as medidas
     const max = this.inclinado.length;
 
+    // this.listaAceleracao = [0];
     // Monta lista com os cálculos da velocidade média
     for (let i = 0; i < max; i++) {
       const point = [];
+
+      let aceleracao: number;
+
+
+      aceleracao = i === 0
+        ? this.formulasService.aceleracaoMedia(
+          0,
+          this.listaVelocidade[i][1],
+          0,
+          this.inclinado[i].tempo)
+        : this.formulasService.aceleracaoMedia(
+          this.listaVelocidade[i - 1][1],
+          this.listaVelocidade[i][1],
+          this.inclinado[i - 1].tempo,
+          this.inclinado[i].tempo);
+
       point.push(this.inclinado[i].tempo);
-      point.push(parseFloat((this.listaVelocidade[i][1] / this.listaVelocidade[i][0]).toFixed(3)));
+      point.push(aceleracao);
+
       this.listaAceleracao.push(point);
-      console.log('Item 1: ', this.listaVelocidade[i][0], this.listaVelocidade[i][1]);
+      this.aceleracaoMedia += aceleracao;
+
+
+      // point.push(this.inclinado[i].tempo);
+      // point.push(parseFloat((this.listaVelocidade[i][1] / this.listaVelocidade[i][0]).toFixed(3)));
+      // this.listaAceleracao.push(point);
+      // console.log('Item 1: ', this.listaVelocidade[i][0], this.listaVelocidade[i][1]);
       // console.log('Item 2: ', this.listaVelocidade[i][0]);
     }
 
-    console.log('Lista aceleração: ', this.listaAceleracao);
+    this.aceleracaoMedia = this.aceleracaoMedia / this.listaAceleracao.length;
+    // console.log('Lista aceleração: ', this.listaAceleracao);
     // Adiciona os dados no objeto do gráfico
     objGrafico.series.push({
       name: 'Aceleração média',
       data: this.listaAceleracao
     });
+    objGrafico.series.push({
+      name: 'Média',
+      data: [[this.inclinado[0].tempo, this.aceleracaoMedia], [this.inclinado[3].tempo, this.aceleracaoMedia]]
+    });
 
     // Cria o gráfico
     Highcharts.chart('grafico-inclinado-aceleracao-media', objGrafico);
+  }
+
+  graficoPotencial() {
+
+    // Objeto com as configurações do gráfico
+    const objGrafico = {
+
+      title: {
+        text: 'Energia potencial, cinética e mecânica',
+        style: {
+          fontSize: '16px',
+          color: '#404040',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto, sans-serif'
+        }
+      },
+
+      subtitle: {
+        text: 'Energias do carrinho durante o deslocamento',
+        // align: 'left'
+        style: {
+          fontSize: '14px',
+          fontFamily: 'Roboto, sans-serif'
+        }
+      },
+
+      xAxis: {
+        title: {
+          text: 'Tempo (s)'
+        }
+      },
+
+      yAxis: {
+        title: {
+          text: 'Energia (J)'
+        },
+        min: 0,
+        max: 0.1
+      },
+      legend: {
+        enabled: false,
+      },
+
+      tooltip: {
+        headerFormat: ' <span style="font-size: 10px">{point.key} s</span><br/>',
+        valueSuffix: ' J'
+      },
+
+      plotOptions: {
+        series: {
+          label: {
+            connectorAllowed: false
+          },
+          pointStart: 0
+        }
+      },
+
+      series: [],
+
+      responsive: {
+        rules: [{
+          condition: {
+            maxWidth: 500
+          },
+        }]
+      },
+
+      credits: {
+        enabled: false,
+      }
+
+    };
+
+    const listaPotencial = [];
+    const listaCinetica = [];
+    const listaMec = [];
+
+    // Tamanho da lista com as medidas
+    const max = this.inclinado.length;
+
+    for (let i = 0; i < max; i++) {
+      const pointPot = [];
+      const pointCin = [];
+      const pointMec = [];
+
+      pointPot.push(this.inclinado[i].tempo);
+      pointPot.push(this.formulasService.energiaPotencial(this.massa, this.alturas[i]));
+      listaPotencial.push(pointPot);
+
+      pointCin.push(this.inclinado[i].tempo);
+      pointCin.push(this.formulasService.energiaCinetica(this.massa, this.listaVelocidade[i][1]));
+      listaCinetica.push(pointCin);
+
+      pointMec.push(this.inclinado[i].tempo);
+      pointMec.push(parseFloat((pointPot[1] + pointCin[1]).toFixed(3)));
+      listaMec.push(pointMec);
+    }
+
+    objGrafico.series.push({
+      name: 'Energia Potencial',
+      data: listaPotencial
+    });
+
+    objGrafico.series.push({
+      name: 'Energia Cinética',
+      data: listaCinetica
+    });
+
+    objGrafico.series.push({
+      name: 'Energia Mecânica',
+      data: listaMec
+    });
+
+    console.log(listaCinetica);
+
+
+    // Cria o gráfico
+    Highcharts.chart('grafico-potencial', objGrafico);
   }
 
 }

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as shape from 'd3-shape';
 
 const Highcharts = require('highcharts');
@@ -12,10 +12,12 @@ require('highcharts/modules/exporting')(Highcharts);
 })
 export class GraficoComponent implements OnInit {
 
+  massa = 0.066;
+
   /**
   * Dados da medida
   */
-  medidas = [
+  medidas: { altura: number, t1: number, t2: number, t3: number }[] = [
     {
       altura: 0.140,
       t1: 0.342,
@@ -54,6 +56,13 @@ export class GraficoComponent implements OnInit {
     }
   ];
 
+  medida: { altura: number, t1: number, t2: number, t3: number } = {
+    altura: 1.161,
+    t1: 1.062,
+    t2: 1.056,
+    t3: 1.043,
+  };
+
   /**
   * Dados do gráfico
   */
@@ -91,6 +100,7 @@ export class GraficoComponent implements OnInit {
   ngOnInit() {
     this.setValores();
     this.graficoPeriodo();
+    this.graficoEP();
   }
 
   setValores() {
@@ -109,6 +119,80 @@ export class GraficoComponent implements OnInit {
       };
     }
     // console.log('Dados do gráfico: ', this.dataChat);
+
+  }
+
+  graficoEP() {
+    // Objeto com as configurações do gráfico
+    const objGrafico = {
+
+      title: {
+        text: 'Energia Potencial',
+        style: {
+          fontSize: '16px',
+          color: '#404040',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto, sans-serif'
+        }
+      },
+
+      subtitle: {
+        text: 'Variação da energia potencial de acordo com o tempo',
+        style: {
+          fontSize: '14px',
+          fontFamily: 'Roboto, sans-serif'
+        }
+      },
+
+      xAxis: {
+        title: {
+          text: 'Tempo (s)'
+        }
+      },
+
+      yAxis: {
+        title: {
+          text: 'Energia potencial'
+        },
+        min: 0
+      },
+
+      legend: {
+        enabled: false,
+      },
+
+      tooltip: {
+        headerFormat: ' <span style="font-size: 10px">{point.key} m</span><br/>',
+        valueSuffix: ' s'
+      },
+
+      plotOptions: {
+        series: {
+          label: {
+            connectorAllowed: false
+          },
+          pointStart: 0
+        }
+      },
+
+      series: [],
+
+      responsive: {
+        rules: [{
+          condition: {
+            maxWidth: 500
+          },
+          chartOptions: {
+          }
+        }]
+      },
+      credits: {
+        enabled: false,
+      }
+
+    };
+
+    const listaEp = [];
 
   }
 
@@ -131,7 +215,7 @@ export class GraficoComponent implements OnInit {
       },
 
       subtitle: {
-        text: 'Variação do período de acordo com a altura do fio',
+        text: 'Variação do período de acordo com o comprimento do fio',
         // align: 'left'
         style: {
           fontSize: '14px',
@@ -222,7 +306,7 @@ export class GraficoComponent implements OnInit {
       point.push(this.medidas[i].altura);
       point.push(this.calculaPeriodo(this.medidas[i].altura));
 
-      console.log('Item: ', point);
+      // console.log('Item: ', point);
       this.listaPeriodo.push(point);
     }
 
@@ -231,7 +315,7 @@ export class GraficoComponent implements OnInit {
       name: 'Período',
       data: this.listaPeriodo
     });
-    console.log('Periodo: ', this.listaPeriodo);
+    // console.log('Periodo: ', this.listaPeriodo);
 
     // Cria o gráfico
     Highcharts.chart('grafico-pendulo-periodo', objGrafico);

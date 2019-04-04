@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as shape from 'd3-shape';
+import { FormulasService } from 'src/app/services/formulas.service';
 
 const Highcharts = require('highcharts');
 require('highcharts/modules/exporting')(Highcharts);
@@ -105,8 +106,13 @@ export class GraficosComponent implements OnInit {
     * Lista com os dados do gráfico de posição x tempo
     */
     listaTempo = [];
+    aceleracaoMedia = 0;
+    massa = 0.21; // kg
+    altura = 0.133; // m
 
-    constructor() {
+    constructor(
+        private formulasService: FormulasService
+    ) {
 
         // Traduzindo alguns textos do modulo de gráfico
         Highcharts.setOptions({
@@ -126,6 +132,7 @@ export class GraficosComponent implements OnInit {
         this.graficoPosicaoTempo();
         this.graficoVelocidadeMedia();
         this.graficoAceleracaoMedia();
+        this.graficoPotencial();
     }
 
     setAceleracaoMedia(): void {
@@ -348,6 +355,8 @@ export class GraficosComponent implements OnInit {
             data: this.listaVelocidade
         });
 
+        console.log('Velocidade média PLANO', this.listaVelocidade)
+
         // Cria o gráfico
         Highcharts.chart('grafico-velocidade-media', objGrafico);
     }
@@ -390,7 +399,8 @@ export class GraficosComponent implements OnInit {
                 title: {
                     text: 'Aceleração (m/s²)'
                 },
-                min: 0
+                min: 0,
+                max: 2
             },
             legend: {
                 enabled: false,
@@ -439,25 +449,160 @@ export class GraficosComponent implements OnInit {
         // Tamanho da lista com as medidas
         const max = this.plano.length;
 
+        this.listaAceleracao = [[this.plano[0].tempo, 0]];
+
         // Monta lista com os cálculos da velocidade média
-        for (let i = 0; i < max; i++) {
+        for (let i = 1; i < max; i++) {
             const point = [];
+
+
+            let aceleracao: number;
+
+            aceleracao = this.formulasService.aceleracaoMedia(
+                this.listaVelocidade[i - 1][1],
+                this.listaVelocidade[i][1],
+                this.plano[i - 1].tempo,
+                this.plano[i].tempo);
             point.push(this.plano[i].tempo);
-            point.push(parseFloat((this.listaVelocidade[i][1] / this.plano[i].tempo).toFixed(3)));
+            point.push(aceleracao);
+
             this.listaAceleracao.push(point);
+            this.aceleracaoMedia += aceleracao;
         }
+        this.aceleracaoMedia = this.aceleracaoMedia / this.listaAceleracao.length;
 
-
+        console.log(this.listaAceleracao);
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-            name: 'Velocidade média',
+            name: 'Aceleração média',
             data: this.listaAceleracao
         });
+        objGrafico.series.push({
+            name: 'Média',
+            data: [[this.plano[0].tempo, this.aceleracaoMedia], [this.plano[3].tempo, this.aceleracaoMedia]]
+        });
 
-        console.log('aceleracao plano', this.listaAceleracao);
+        // console.log('aceleracao lista PLANO', this.listaAceleracao);
+        // console.log('aceleracao media PLANO', this.aceleracaoMedia);
 
         // Cria o gráfico
         Highcharts.chart('grafico-aceleracao-media', objGrafico);
+    }
+
+    graficoPotencial() {
+
+        // Objeto com as configurações do gráfico
+        const objGrafico = {
+
+            title: {
+                text: 'Energia potencial, cinética e mecânica',
+                style: {
+                    fontSize: '16px',
+                    color: '#404040',
+                    fontWeight: 'bold',
+                    fontFamily: 'Roboto, sans-serif'
+                }
+            },
+
+            subtitle: {
+                text: 'Energia do carrinho durante o deslocamento',
+                // align: 'left'
+                style: {
+                    fontSize: '14px',
+                    fontFamily: 'Roboto, sans-serif'
+                }
+            },
+
+            xAxis: {
+                title: {
+                    text: 'Tempo (s)'
+                }
+            },
+
+            yAxis: {
+                title: {
+                    text: 'Energia (J)'
+                },
+                min: 0,
+                max: 0.5
+            },
+            legend: {
+                enabled: false,
+            },
+
+            tooltip: {
+                headerFormat: ' <span style="font-size: 10px">{point.key} s</span><br/>',
+                valueSuffix: ' J'
+            },
+
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                    pointStart: 0
+                }
+            },
+
+            series: [],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                }]
+            },
+
+            credits: {
+                enabled: false,
+            }
+
+        };
+
+        const listaPotencial = [];
+        const listaCinetica = [];
+        const listaMec = [];
+
+        // Tamanho da lista com as medidas
+        const max = this.plano.length;
+
+        for (let i = 0; i < max; i++) {
+            const pointPot = [];
+            const pointCin = [];
+            const pointMec = [];
+
+            pointPot.push(this.plano[i].tempo);
+            pointPot.push(this.formulasService.energiaPotencial(this.massa, this.altura));
+            listaPotencial.push(pointPot);
+
+            pointCin.push(this.plano[i].tempo);
+            pointCin.push(this.formulasService.energiaCinetica(this.massa, this.listaVelocidade[i][1]));
+            listaCinetica.push(pointCin);
+
+            pointMec.push(this.plano[i].tempo);
+            pointMec.push(parseFloat((pointPot[1] + pointCin[1]).toFixed(3)));
+            listaMec.push(pointMec);
+        }
+
+        objGrafico.series.push({
+            name: 'Energia Potencial',
+            data: listaPotencial
+        });
+
+        objGrafico.series.push({
+            name: 'Energia Cinética',
+            data: listaCinetica
+        });
+
+        objGrafico.series.push({
+            name: 'Energia Mecânica',
+            data: listaMec
+        });
+
+
+        // Cria o gráfico
+        Highcharts.chart('grafico-potencial-media', objGrafico);
     }
 
 }
