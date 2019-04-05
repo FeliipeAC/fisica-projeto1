@@ -79,4 +79,12 @@ export class FormulasService {
     return (2 * this.pi * Math.sqrt(comprimento / this.gravidade));
   }
 
+  alturaPendulo(comprimento: number, angulo: number, periodo: number, tempo: number): number {
+      return parseFloat((comprimento - comprimento * Math.cos(this.anguloPendulo(angulo, periodo, tempo))).toFixed(3));
+  }
+
+  anguloPendulo(anguloMax: number, periodo: number, tempo: number): number {
+      return parseFloat((anguloMax * (-1 * Math.cos((2 * this.pi * tempo) / periodo))).toFixed(3));
+  }
+
 }
