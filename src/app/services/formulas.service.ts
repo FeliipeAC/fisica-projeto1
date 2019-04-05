@@ -42,11 +42,32 @@ export class FormulasService {
    * @param tempo tempo
    */
   velocidadePendulo(periodo: number, comprimento: number, tempo: number): number {
-    return parseFloat((-1 * this.pulsacaoPendulo(periodo) * this.amplitudePendulo(5, comprimento) *
+    return parseFloat((-1 * this.pulsacaoPendulo(periodo) * this.amplitudePendulo(comprimento) *
     Math.sin(this.pulsacaoPendulo(periodo) * tempo)).toFixed(3));
   }
 
-  amplitudePendulo(angulo: number, comprimento: number) {
+  /**
+   * Calcula a posição no instante t
+   * @param periodo periodo do pendulo
+   * @param comprimento comprimento do fio
+   * @param tempo tempo
+   */
+  posicaoPendulo(periodo: number, comprimento: number, tempo: number): number {
+    return parseFloat((this.amplitudePendulo(comprimento) * Math.cos(this.pulsacaoPendulo(periodo) * tempo)).toFixed(3));
+  }
+
+  /**
+   * Calcula a aceleração no instante t
+   * @param periodo periodo do pendulo
+   * @param comprimento comprimento do fio
+   * @param tempo tempo
+   */
+  aceleracaoPendulo(periodo: number, comprimento: number, tempo: number): number {
+    return parseFloat((-1 * this.posicaoPendulo(periodo, comprimento, tempo) * this.pulsacaoPendulo(periodo) *
+    this.pulsacaoPendulo(periodo)).toFixed(3));
+  }
+
+  amplitudePendulo(comprimento: number) {
     return Math.sin(5) * comprimento;
   }
 

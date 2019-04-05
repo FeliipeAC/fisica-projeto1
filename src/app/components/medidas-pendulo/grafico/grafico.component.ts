@@ -74,11 +74,34 @@ export class GraficoComponent implements OnInit {
     */
     listaPeriodo = [];
 
+    /**
+     * Dados da velociade x tempo
+     */
     listaVelocidade = [];
 
     /**
-    * Gravidade (m/s³)
-    */
+     * Dados da posição x tempo
+     */
+    listaPosicao = [];
+
+    /**
+     * Dados da aceleração x tempo
+     */
+    listaAceleracao = [];
+
+    /**
+     * Lista com os tempos que serão usados para construir os gráficos
+     */
+    pontosTempo = [];
+
+    /**
+     * Tempo médio dos tempos medidos
+     */
+    tempoMedio = 0;
+
+    /**
+     * Gravidade (m/s³)
+     */
     g = 9.8;
 
     @Output() element = new EventEmitter();
@@ -98,34 +121,27 @@ export class GraficoComponent implements OnInit {
                 printChart: 'Imprimir gráfico'
             }
         });
+
+        // Tempo médio
+        this.tempoMedio = (this.medida.t1 + this.medida.t2 + this.medida.t3 ) / 3;
+
+        // Preenche a lista com os tempos num intervalo de 0.1s
+        for (let i = 0; i < this.tempoMedio; i += 0.100) {
+            this.pontosTempo.push(i);
+        }
     }
 
     ngOnInit() {
-        this.setValores();
         this.graficoPeriodo();
         this.graficoEP();
         this.graficoVelocidade();
+        this.graficoPosicao();
+        this.graficoAceleracao();
     }
 
-    setValores() {
-
-        this.dataChat = [
-            {
-                name: 'Período',
-                series: []
-            }
-        ];
-
-        for (let i = 0; i < this.medidas.length; i++) {
-            this.dataChat[0].series[i] = {
-                name: parseFloat((this.medidas[i].altura).toFixed(3)),
-                value: this.calculaPeriodo(this.medidas[i].altura)
-            };
-        }
-        // console.log('Dados do gráfico: ', this.dataChat);
-
-    }
-
+    /**
+     * Constrói o gráfico de velocidade x tempo
+     */
     graficoVelocidade(): void {
         // Objeto com as configurações do gráfico
         const objGrafico = {
@@ -141,7 +157,7 @@ export class GraficoComponent implements OnInit {
             },
 
             subtitle: {
-                text: 'Variação da velocidade de acordo com o tempo',
+                text: 'Variação da posição de acordo com o tempo',
                 // align: 'left'
                 style: {
                     fontSize: '14px',
@@ -196,27 +212,13 @@ export class GraficoComponent implements OnInit {
 
         };
 
-        // Tempo médio
-        const tMedio = (this.medida.t1 + this.medida.t2 + this.medida.t3 ) / 3;
-
-        // Lista com os tempos
-        const pontosTempo = [];
-
-        // Preenche a lista com os tempos num intervalo de 0.1s
-        for (let i = 0; i < tMedio; i += 0.1) {
-            pontosTempo.push(i);
-        }
-
-        // Tamanho da lista com as medidas
-        const max = this.medidas.length;
-
         // Periodo
         const periodo = this.calculaPeriodo(this.medida.altura);
 
         // Monta lista com os cálculos da velocidade
-        for (const tempo of pontosTempo) {
+        for (const tempo of this.pontosTempo) {
             const point = [];
-            point.push(tempo.toFixed(3));
+            point.push(parseFloat(tempo.toFixed(3)));
             const vel = this.formulas.velocidadePendulo(periodo, this.medida.altura, tempo);
             point.push(vel);
 
@@ -224,7 +226,7 @@ export class GraficoComponent implements OnInit {
             this.listaVelocidade.push(point);
         }
 
-        console.log('Velocidade: ', this.listaVelocidade);
+        // console.log('Velocidade: ', this.listaVelocidade);
 
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
@@ -236,6 +238,211 @@ export class GraficoComponent implements OnInit {
         // Cria o gráfico
         Highcharts.chart('grafico-pendulo-velocidade', objGrafico);
     }
+
+
+    /**
+     * Consrói o gráfico de posição x tempo
+     */
+    graficoPosicao(): void {
+        // Objeto com as configurações do gráfico
+        const objGrafico = {
+
+            title: {
+                text: 'Posição x Tempo',
+                style: {
+                    fontSize: '16px',
+                    color: '#404040',
+                    fontWeight: 'bold',
+                    fontFamily: 'Roboto, sans-serif'
+                }
+            },
+
+            subtitle: {
+                text: 'Variação da velocidade de acordo com o tempo',
+                // align: 'left'
+                style: {
+                    fontSize: '14px',
+                    fontFamily: 'Roboto, sans-serif'
+                }
+            },
+
+            xAxis: {
+                title: {
+                    text: 'Tempo (s)'
+                },
+                // minTickInterval: 0.1
+            },
+
+            yAxis: {
+                title: {
+                    text: 'Posição (m)'
+                },
+                // min: 0
+            },
+
+            legend: {
+                enabled: false,
+            },
+
+            tooltip: {
+                headerFormat: ' <span style="font-size: 10px">{point.key} s</span><br/>',
+                valueSuffix: ' m'
+            },
+
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                    // pointStart: 0
+                }
+            },
+
+            series: [],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                }]
+            },
+
+            credits: {
+                enabled: false,
+            }
+
+        };
+
+        // Periodo
+        const periodo = this.calculaPeriodo(this.medida.altura);
+
+        // Monta lista com os cálculos da posição
+        for (const tempo of this.pontosTempo) {
+            const point = [];
+            point.push(parseFloat(tempo.toFixed(3)));
+            const pos = this.formulas.posicaoPendulo(periodo, this.medida.altura, tempo);
+            point.push(pos);
+
+            // console.log('Item: ', point);
+            this.listaPosicao.push(point);
+        }
+
+        console.log('Posição: ', this.listaPosicao);
+
+        // Adiciona os dados no objeto do gráfico
+        objGrafico.series.push({
+          name: 'Posição',
+          data: this.listaPosicao
+        });
+        // console.log('Periodo: ', this.listaPeriodo);
+
+        // Cria o gráfico
+        Highcharts.chart('grafico-pendulo-posicao', objGrafico);
+    }
+
+
+    /**
+     * Consrói o gráfico de aceleração x tempo
+     */
+    graficoAceleracao(): void {
+        // Objeto com as configurações do gráfico
+        const objGrafico = {
+
+            title: {
+                text: 'Aceleração x Tempo',
+                style: {
+                    fontSize: '16px',
+                    color: '#404040',
+                    fontWeight: 'bold',
+                    fontFamily: 'Roboto, sans-serif'
+                }
+            },
+
+            subtitle: {
+                text: 'Variação da velocidade de acordo com o tempo',
+                // align: 'left'
+                style: {
+                    fontSize: '14px',
+                    fontFamily: 'Roboto, sans-serif'
+                }
+            },
+
+            xAxis: {
+                title: {
+                    text: 'Tempo (s)'
+                },
+                // minTickInterval: 0.1
+            },
+
+            yAxis: {
+                title: {
+                    text: 'Posição (m/s²)'
+                },
+                // min: 0
+            },
+
+            legend: {
+                enabled: false,
+            },
+
+            tooltip: {
+                headerFormat: ' <span style="font-size: 10px">{point.key} s</span><br/>',
+                valueSuffix: ' m/s²'
+            },
+
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                    // pointStart: 0
+                }
+            },
+
+            series: [],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                }]
+            },
+
+            credits: {
+                enabled: false,
+            }
+
+        };
+
+        // Periodo
+        const periodo = this.calculaPeriodo(this.medida.altura);
+
+        // Monta lista com os cálculos da aceleração
+        for (const tempo of this.pontosTempo) {
+            const point = [];
+            point.push(parseFloat(tempo.toFixed(3)));
+            const ace = this.formulas.aceleracaoPendulo(periodo, this.medida.altura, tempo);
+            point.push(ace);
+
+            // console.log('Item: ', point);
+            this.listaAceleracao.push(point);
+        }
+
+        console.log('Acelaração: ', this.listaAceleracao);
+
+        // Adiciona os dados no objeto do gráfico
+        objGrafico.series.push({
+          name: 'Aceleração',
+          data: this.listaAceleracao
+        });
+        // console.log('Periodo: ', this.listaPeriodo);
+
+        // Cria o gráfico
+        Highcharts.chart('grafico-pendulo-aceleracao', objGrafico);
+    }
+
 
     graficoEP() {
         // Objeto com as configurações do gráfico
@@ -312,8 +519,8 @@ export class GraficoComponent implements OnInit {
     }
 
     /**
-    * Contrói o gráfico com os valores da velocidade média
-    */
+     * Contrói o gráfico com os valores da velocidade média
+     */
     graficoPeriodo(): void {
 
         // Objeto com as configurações do gráfico
@@ -412,9 +619,9 @@ export class GraficoComponent implements OnInit {
     }
 
     /**
-    * Calcula o período
-    * @param altura altura do fio em m
-    */
+     * Calcula o período
+     * @param altura altura do fio em m
+     */
     calculaPeriodo(altura: number): number {
         const valor = (2 * Math.PI * Math.sqrt(altura / this.g));
         // console.log('Periodo: ', valor);
