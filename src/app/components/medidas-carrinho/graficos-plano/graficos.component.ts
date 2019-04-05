@@ -403,7 +403,7 @@ export class GraficosComponent implements OnInit {
                 max: 2
             },
             legend: {
-                enabled: false,
+                enabled: true,
                 // layout: 'vertical',
                 // align: 'right',
                 // verticalAlign: 'middle'
@@ -527,7 +527,7 @@ export class GraficosComponent implements OnInit {
                 max: 0.5
             },
             legend: {
-                enabled: false,
+                enabled: true,
             },
 
             tooltip: {

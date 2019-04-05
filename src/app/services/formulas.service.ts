@@ -35,12 +35,19 @@ export class FormulasService {
 
   // Pêndulo
 
-  velocidadePendulo(pulsacao: number, amplitude: number, tempo: number, faseInicial: number) {
-    return (-1 * pulsacao * amplitude * Math.sin((pulsacao * tempo) + faseInicial));
+  /**
+   * Calcula a velocidade no instante t
+   * @param periodo periodo do pendulo
+   * @param comprimento comprimento do fio
+   * @param tempo tempo
+   */
+  velocidadePendulo(periodo: number, comprimento: number, tempo: number): number {
+    return parseFloat((-1 * this.pulsacaoPendulo(periodo) * this.amplitudePendulo(5, comprimento) *
+    Math.sin(this.pulsacaoPendulo(periodo) * tempo)).toFixed(3));
   }
 
-  amplitudePendulo(angulo: number, ) {
-    // TODO
+  amplitudePendulo(angulo: number, comprimento: number) {
+    return Math.sin(5) * comprimento;
   }
 
   pulsacaoPendulo(periodo: number) {

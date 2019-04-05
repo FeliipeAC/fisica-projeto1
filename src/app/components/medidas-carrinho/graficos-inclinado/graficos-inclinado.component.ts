@@ -165,8 +165,8 @@ export class GraficosInclinadoComponent implements OnInit {
   }
 
   /**
-  * Cria o gráfico de Posição x Tempo
-  */
+   * Cria o gráfico de Posição x Tempo
+   */
   graficoPosicaoTempo(): void {
 
     // Objeto com as configurações do gráfico
@@ -410,7 +410,7 @@ export class GraficosInclinadoComponent implements OnInit {
       },
 
       legend: {
-        enabled: false,
+        enabled: true,
         // layout: 'vertical',
         // align: 'right',
         // verticalAlign: 'middle'
@@ -544,7 +544,7 @@ export class GraficosInclinadoComponent implements OnInit {
         max: 0.1
       },
       legend: {
-        enabled: false,
+        enabled: true,
       },
 
       tooltip: {
