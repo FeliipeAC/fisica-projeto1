@@ -13,6 +13,9 @@ require('highcharts/modules/exporting')(Highcharts);
 })
 export class GraficoComponent implements OnInit {
 
+    /**
+     * Massa da esfera (em kg)
+     */
     massa = 0.066;
 
     /**
@@ -57,6 +60,9 @@ export class GraficoComponent implements OnInit {
         }
     ];
 
+    /**
+     * Medida usada para os cálculos do pêndulo (maior altura)
+     */
     medida: { altura: number, t1: number, t2: number, t3: number } = {
         altura: 1.161,
         t1: 10.62,
@@ -105,6 +111,11 @@ export class GraficoComponent implements OnInit {
     listaMecanica = [];
 
     /**
+     * Dados com altura x tempo
+     */
+    listaAltura = [];
+
+    /**
      * Lista com os tempos que serão usados para construir os gráficos
      */
     pontosTempo = [];
@@ -122,6 +133,10 @@ export class GraficoComponent implements OnInit {
     @Output() element = new EventEmitter();
     @Input() disabledAnimation;
 
+    /**
+     * Gráficos do experimento com o pêndulo
+     * @param formulas Serviço com as fórmulas necessárias
+     */
     constructor(private formulas: FormulasService) {
         // console.log('Medidas: ', this.medidas);
 
@@ -138,21 +153,22 @@ export class GraficoComponent implements OnInit {
         });
 
         // Tempo médio
-        this.tempoMedio = (this.medida.t1 + this.medida.t2 + this.medida.t3 ) / 3;
+        this.tempoMedio = (this.medida.t1 + this.medida.t2 + this.medida.t3) / 3;
 
         // Preenche a lista com os tempos num intervalo de 0.080s
-        for (let i = 0; i < this.tempoMedio; i += 0.060) {
-            this.pontosTempo.push(i);
+        for (let i = 0; i < this.tempoMedio; i += 0.061) {
+            this.pontosTempo.push(parseFloat(i.toFixed(3)));
         }
+        // console.log('Lista tempo: ', this.pontosTempo);
     }
 
     ngOnInit() {
         this.graficoPeriodo();
-        this.graficoEP();
         this.graficoVelocidade();
         this.graficoPosicao();
         this.graficoAceleracao();
         this.graficoEnergias();
+        this.graficoAltura();
     }
 
     /**
@@ -234,11 +250,12 @@ export class GraficoComponent implements OnInit {
 
         // Periodo
         const periodo = this.calculaPeriodo(this.medida.altura);
+        // console.log('Periodo: ', periodo);
 
         // Monta lista com os cálculos da velocidade
         for (const tempo of this.pontosTempo) {
             const point = [];
-            point.push(parseFloat(tempo.toFixed(3)));
+            point.push(parseFloat(tempo.toFixed(5)));
             const vel = this.formulas.velocidadePendulo(periodo, this.medida.altura, tempo);
             point.push(vel);
 
@@ -250,9 +267,9 @@ export class GraficoComponent implements OnInit {
 
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-          name: 'Velocidade',
-          data: this.listaVelocidade,
-          marker: {
+            name: 'Velocidade',
+            data: this.listaVelocidade,
+            marker: {
                 enabled: true,
                 radius: 3
             },
@@ -347,12 +364,22 @@ export class GraficoComponent implements OnInit {
 
         // Monta lista com os cálculos da posição
         for (const tempo of this.pontosTempo) {
+
+            // Ponto do gráfico
             const point = [];
+
+            // Adiciona o tempo no ponto
             point.push(parseFloat(tempo.toFixed(3)));
+
+            // Calcula a posição
             const pos = this.formulas.posicaoPendulo(periodo, this.medida.altura, tempo);
+
+            // Adiciona a posição no ponto
             point.push(pos);
 
             // console.log('Item: ', point);
+
+            // Adiciona o ponto na lista
             this.listaPosicao.push(point);
         }
 
@@ -360,12 +387,12 @@ export class GraficoComponent implements OnInit {
 
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-          name: 'Posição',
-          data: this.listaPosicao,
-          marker: {
-            enabled: true,
-            radius: 3
-        },
+            name: 'Posição',
+            data: this.listaPosicao,
+            marker: {
+                enabled: true,
+                radius: 3
+            },
         });
         // console.log('Periodo: ', this.listaPeriodo);
 
@@ -473,12 +500,12 @@ export class GraficoComponent implements OnInit {
 
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-          name: 'Aceleração',
-          data: this.listaAceleracao,
-          marker: {
-            enabled: true,
-            radius: 3
-        },
+            name: 'Aceleração',
+            data: this.listaAceleracao,
+            marker: {
+                enabled: true,
+                radius: 3
+            },
         });
         // console.log('Periodo: ', this.listaPeriodo);
 
@@ -569,24 +596,46 @@ export class GraficoComponent implements OnInit {
 
         // Monta lista com os cálculos da energia cinética
         for (let i = 0; i < this.pontosTempo.length; i++) {
+
+            // Ponto do gráfico
             const point = [];
+
+            // Adiciona o tempo
             point.push(parseFloat(this.pontosTempo[i].toFixed(3)));
+
+            // Calcula a energia cinética
             const cin = this.formulas.energiaCinetica(this.massa, this.listaVelocidade[i][1]);
+
+            // Adiciona a energia
             point.push(cin);
 
             // console.log('Item: ', point);
+
+            // Adiciona o ponto na lista
             this.listaCinetica.push(point);
         }
 
         // Monta lista com os cálculos da energia potencial gravitacional
         for (const tempo of this.pontosTempo) {
+
+            // Ponto do gráfico
             const point = [];
+
+            // Adiciona o tempo
             point.push(parseFloat(tempo.toFixed(3)));
+
+            // Calcula a altura
             const altura = this.formulas.alturaPendulo(this.medida.altura, 5, periodo, tempo);
+
+            // Calcula a energia potencial
             const pot = this.formulas.energiaPotencial(this.massa, altura);
+
+            // Adiciona a energia
             point.push(pot);
 
             // console.log('Item: ', point);
+
+            // Adicona o ponto na lista
             this.listaPotencial.push(point);
         }
 
@@ -602,21 +651,23 @@ export class GraficoComponent implements OnInit {
             this.listaMecanica.push(point);
         }
 
+        // console.log('Vel: ', this.listaVelocidade);
+
         // console.log('Cinetica: ', this.listaCinetica);
         // console.log('Potencial: ', this.listaPotencial);
         // console.log('Mecânica: ', this.listaMecanica);
 
         // Adiciona os dados de energia cinética no objeto do gráfico
         objGrafico.series.push({
-          name: 'Energia Cinética',
-          data: this.listaCinetica,
-          marker: {
-            enabled: true,
-            radius: 3
-        },
+            name: 'Energia Cinética',
+            data: this.listaCinetica,
+            marker: {
+                enabled: true,
+                radius: 3
+            },
         });
 
-         // Adiciona os dados de energica potencial gravitacional no objeto do gráfico
+        // Adiciona os dados de energica potencial gravitacional no objeto do gráfico
         objGrafico.series.push({
             name: 'Energia Potencial Gravitacional',
             data: this.listaPotencial,
@@ -624,7 +675,7 @@ export class GraficoComponent implements OnInit {
                 enabled: true,
                 radius: 3
             },
-          });
+        });
 
         // Adiciona os dados de energia mecânica no objeto do gráfico
         objGrafico.series.push({
@@ -634,20 +685,22 @@ export class GraficoComponent implements OnInit {
                 enabled: true,
                 radius: 3
             },
-          });
+        });
         // console.log('Periodo: ', this.listaPeriodo);
 
         // Cria o gráfico
         Highcharts.chart('grafico-pendulo-energias', objGrafico);
     }
 
-
-    graficoEP() {
+    /**
+     * Consrói o gráfico de energias (Gravitacional, Cinética e Mecânica)
+     */
+    graficoAltura(): void {
         // Objeto com as configurações do gráfico
         const objGrafico = {
 
             title: {
-                text: 'Energia Potencial',
+                text: 'Altura x Tempo',
                 style: {
                     fontSize: '16px',
                     color: '#404040',
@@ -657,7 +710,8 @@ export class GraficoComponent implements OnInit {
             },
 
             subtitle: {
-                text: 'Variação da energia potencial de acordo com o tempo',
+                text: 'Variação da altura ao decorrer do tempo',
+                // align: 'left'
                 style: {
                     fontSize: '14px',
                     fontFamily: 'Roboto, sans-serif'
@@ -667,23 +721,24 @@ export class GraficoComponent implements OnInit {
             xAxis: {
                 title: {
                     text: 'Tempo (s)'
-                }
+                },
+                // minTickInterval: 0.1
             },
 
             yAxis: {
                 title: {
-                    text: 'Energia potencial'
+                    text: 'Altura (m)'
                 },
                 min: 0
             },
 
             legend: {
-                enabled: false,
+                enabled: true,
             },
 
             tooltip: {
-                headerFormat: ' <span style="font-size: 10px">{point.key} m</span><br/>',
-                valueSuffix: ' s'
+                headerFormat: ' <span style="font-size: 10px">{point.key} s</span><br/>',
+                valueSuffix: ' m'
             },
 
             plotOptions: {
@@ -691,7 +746,7 @@ export class GraficoComponent implements OnInit {
                     label: {
                         connectorAllowed: false
                     },
-                    pointStart: 0
+                    // pointStart: 0
                 }
             },
 
@@ -702,18 +757,56 @@ export class GraficoComponent implements OnInit {
                     condition: {
                         maxWidth: 500
                     },
-                    chartOptions: {
-                    }
                 }]
             },
+
             credits: {
                 enabled: false,
-            }
+            },
+
+            exporting: {
+                printMaxWidth: 1200
+            },
 
         };
 
-        const listaEp = [];
+        // Periodo
+        const periodo = this.calculaPeriodo(this.medida.altura);
 
+        // Monta lista com os cálculos da altura x tempo
+        for (const tempo of this.pontosTempo) {
+
+            // Ponto do gráfico
+            const point = [];
+
+            // Adiciona o tempo
+            point.push(parseFloat(tempo.toFixed(3)));
+
+            // Calcula a altura
+            const altura = this.formulas.alturaPendulo(this.medida.altura, 5, periodo, tempo);
+
+            // Adiciona a altura
+            point.push(altura);
+
+            // console.log('Item: ', point);
+
+            // Adicona o ponto na lista
+            this.listaAltura.push(point);
+        }
+
+        // Adiciona os dados da altura no objeto do gráfico
+        objGrafico.series.push({
+            name: 'Altura',
+            data: this.listaAltura,
+            marker: {
+                enabled: true,
+                radius: 3
+            },
+        });
+        // console.log('Periodo: ', this.listaPeriodo);
+
+        // Cria o gráfico
+        Highcharts.chart('grafico-pendulo-altura', objGrafico);
     }
 
     /**

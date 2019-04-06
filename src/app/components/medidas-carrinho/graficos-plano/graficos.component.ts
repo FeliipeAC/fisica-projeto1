@@ -355,7 +355,7 @@ export class GraficosComponent implements OnInit {
             data: this.listaVelocidade
         });
 
-        console.log('Velocidade média PLANO', this.listaVelocidade)
+        // console.log('Velocidade média PLANO', this.listaVelocidade)
 
         // Cria o gráfico
         Highcharts.chart('grafico-velocidade-media', objGrafico);
@@ -471,7 +471,7 @@ export class GraficosComponent implements OnInit {
         }
         this.aceleracaoMedia = this.aceleracaoMedia / this.listaAceleracao.length;
 
-        console.log(this.listaAceleracao);
+        // console.log(this.listaAceleracao);
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
             name: 'Aceleração média',

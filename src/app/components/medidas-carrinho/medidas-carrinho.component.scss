@@ -6,6 +6,12 @@ h2 {
 h3 {
   font-size: 1.2rem;
   color: #131313;
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 20px 0;
+  z-index: 3;
 }
 
 .content {
@@ -16,7 +22,7 @@ h3 {
     margin: 10px 15px;
     padding: 15px;
     border-radius: 4px;
-    overflow: hidden;
+    // overflow: hidden;
     background: #fff;
 
     svg {
