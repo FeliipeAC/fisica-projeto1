@@ -106,8 +106,21 @@ export class GraficosComponent implements OnInit {
     * Lista com os dados do gráfico de posição x tempo
     */
     listaTempo = [];
+
+    /**
+     * Dados teóricos da posição x tempo
+     */
+    listaPosicaoTeorico = [];
+
+    /**
+     * Dados teóricos da velocidade média
+     */
+    listaVelocideTeorico = [];
+
     aceleracaoMedia = 0;
+
     massa = 0.21; // kg
+
     altura = 0.133; // m
 
     constructor(
@@ -129,8 +142,8 @@ export class GraficosComponent implements OnInit {
 
     ngOnInit() {
 
-        this.graficoPosicaoTempo();
         this.graficoVelocidadeMedia();
+        this.graficoPosicaoTempo();
         this.graficoAceleracaoMedia();
         this.graficoPotencial();
     }
@@ -139,7 +152,7 @@ export class GraficosComponent implements OnInit {
 
         this.dataChartAce = [
             {
-                name: 'Aceleração média',
+                name: 'Aceleração x Tempo',
                 series: []
             }
         ];
@@ -193,7 +206,7 @@ export class GraficosComponent implements OnInit {
                 }
             },
             legend: {
-                enabled: false,
+                enabled: true,
                 // layout: 'vertical',
                 // align: 'right',
                 // verticalAlign: 'middle'
@@ -244,10 +257,41 @@ export class GraficosComponent implements OnInit {
             this.listaTempo.push(point);
         }
 
+        for (let i = 0; i < this.plano.length; i++) {
+            const pointTeorico = [];
+            let posFinal: number;
+
+            if (i === 0) {
+                pointTeorico.push(this.plano[i].tempo);
+
+                posFinal = this.formulasService.posicaoTempo(this.plano[0].distancia, this.listaVelocideTeorico[i][1], 0);
+
+                pointTeorico.push(posFinal);
+
+            } else {
+                pointTeorico.push(this.plano[i].tempo);
+
+                posFinal = this.formulasService.posicaoTempo(this.plano[0].distancia, this.listaVelocideTeorico[i][1],
+                    this.plano[i].tempo);
+
+                pointTeorico.push(posFinal);
+            }
+
+            this.listaPosicaoTeorico.push(pointTeorico);
+
+        }
+
+        console.log('Posição teórico: ', this.listaPosicaoTeorico);
+
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-            name: 'Posição',
+            name: 'Prático',
             data: this.listaTempo
+        });
+
+        objGrafico.series.push({
+            name: 'Teórico',
+            data: this.listaPosicaoTeorico
         });
 
         // Cria o gráfico
@@ -263,7 +307,7 @@ export class GraficosComponent implements OnInit {
         const objGrafico = {
 
             title: {
-                text: 'Velocidade média',
+                text: 'Velocidade x Tempo',
                 style: {
                     fontSize: '16px',
                     color: '#404040',
@@ -294,7 +338,7 @@ export class GraficosComponent implements OnInit {
                 min: 0
             },
             legend: {
-                enabled: false,
+                enabled: true,
                 // layout: 'vertical',
                 // align: 'right',
                 // verticalAlign: 'middle'
@@ -349,10 +393,25 @@ export class GraficosComponent implements OnInit {
         }
 
 
+        // Monta lista com os cálculos da velocidade média (teórico)
+        for (let i = 0; i < max; i++) {
+            const point = [];
+            point.push(this.plano[i].tempo);
+            point.push(parseFloat(((this.plano[3].distancia - this.plano[0].distancia) /
+                (this.plano[3].tempo - this.plano[0].tempo)).toFixed(3)));
+            this.listaVelocideTeorico.push(point);
+        }
+
+
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-            name: 'Velocidade média',
+            name: 'Prático',
             data: this.listaVelocidade
+        });
+
+        objGrafico.series.push({
+            name: 'Teórico',
+            data: this.listaVelocideTeorico
         });
 
         // console.log('Velocidade média PLANO', this.listaVelocidade)
@@ -371,7 +430,7 @@ export class GraficosComponent implements OnInit {
         const objGrafico = {
 
             title: {
-                text: 'Aceleração média',
+                text: 'Aceleração x Tempo',
                 style: {
                     fontSize: '16px',
                     color: '#404040',
@@ -474,11 +533,11 @@ export class GraficosComponent implements OnInit {
         // console.log(this.listaAceleracao);
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-            name: 'Aceleração média',
+            name: 'Prático',
             data: this.listaAceleracao
         });
         objGrafico.series.push({
-            name: 'Média',
+            name: 'Teórico',
             data: [[this.plano[0].tempo, this.aceleracaoMedia], [this.plano[3].tempo, this.aceleracaoMedia]]
         });
 

@@ -181,4 +181,36 @@ export class FormulasService {
 
     }
 
+    /**
+     * Retorna a posição em relação ao tempo (teórico)
+     * @param posInicial posição inicial
+     * @param velocidade velocidade
+     * @param tempo tempo (delta)
+     */
+    posicaoTempo(posInicial: number, velocidade: number, tempo: number): number {
+        console.log('Calculo posicao teorico: ', posInicial, ' + ', velocidade, ' * ', tempo);
+        return parseFloat((posInicial + velocidade * tempo).toFixed(3));
+    }
+
+    /**
+     * Calcula  velocidade no MUV
+     * @param velInicial velocidade inicial
+     * @param aceleracao aceleração
+     * @param tempo tempo atual
+     */
+    velocidadeMUV(velInicial: number, aceleracao: number, tempo: number): number {
+        return parseFloat((velInicial + aceleracao * tempo).toFixed(3));
+    }
+
+    /**
+     * Calcula a posição no MUV
+     * @param posInicial posição inicial
+     * @param velInicial velocidade inicial
+     * @param tempo tempo atual
+     * @param aceleracao aceleração
+     */
+    posicaoMUV(posInicial: number, velInicial: number, tempo: number, aceleracao: number): number {
+        return parseFloat((posInicial + (velInicial * tempo) + (aceleracao * tempo * tempo) / 2).toFixed(3));
+    }
+
 }

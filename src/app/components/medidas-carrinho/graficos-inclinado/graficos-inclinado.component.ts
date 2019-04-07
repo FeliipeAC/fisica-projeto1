@@ -75,6 +75,16 @@ export class GraficosInclinadoComponent implements OnInit {
     aceleracaoMedia = 0;
 
     /**
+    * Dados da posição x tempo (teórico)
+    */
+    listaPosicaoTeorico = [];
+
+    /**
+     * Dados teóricos de velociade x tempo
+     */
+    listaVelocidadeToerico = [];
+
+    /**
     * Massa do carrinho
     */
     massa = 0.21; // kg
@@ -117,13 +127,15 @@ export class GraficosInclinadoComponent implements OnInit {
     }
 
     ngOnInit() {
-        // Chama método que monta o gráfico de posição x tempo
-        this.graficoPosicaoTempo();
 
         // Chama método que monta o gráfico de velocidade média
         this.graficoVelocidadeMedia();
 
+
         this.graficoAceleracaoMedia();
+
+        // Chama método que monta o gráfico de posição x tempo
+        this.graficoPosicaoTempo();
 
         this.graficoPotencial();
     }
@@ -169,7 +181,7 @@ export class GraficosInclinadoComponent implements OnInit {
                 }
             },
             legend: {
-                enabled: false,
+                enabled: true,
                 // layout: 'vertical',
                 // align: 'right',
                 // verticalAlign: 'middle'
@@ -228,11 +240,43 @@ export class GraficosInclinadoComponent implements OnInit {
             this.listaTempo.push(point);
         }
 
+        for (let i = 0; i < this.inclinado.length; i++) {
+            const pointTeorico = [];
+            let posFinal: number;
+
+            if (i === 0) {
+                pointTeorico.push(this.inclinado[i].tempo);
+
+                posFinal = this.formulasService.posicaoMUV(this.inclinado[0].distancia, this.listaVelocidadeToerico[0][1],
+                    this.inclinado[i].tempo, this.aceleracaoMedia);
+
+                pointTeorico.push(posFinal);
+
+            } else {
+                pointTeorico.push(this.inclinado[i].tempo);
+
+                posFinal = this.formulasService.posicaoMUV(this.inclinado[0].distancia, this.listaVelocidadeToerico[i][1],
+                    this.inclinado[i].tempo, this.aceleracaoMedia);
+
+                pointTeorico.push(posFinal);
+            }
+
+            this.listaPosicaoTeorico.push(pointTeorico);
+
+        }
+
+        // console.log('Posição x Tempo: ', this.listaPosicaoTeorico);
+
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-            name: 'Posição',
+            name: 'Prático',
             data: this.listaTempo
         });
+
+        objGrafico.series.push({
+            name: 'Teórico',
+            data: this.listaPosicaoTeorico
+        })
 
         // Cria o gráfico
         Highcharts.chart('grafico-inclinado-posicao-tempo', objGrafico);
@@ -247,7 +291,7 @@ export class GraficosInclinadoComponent implements OnInit {
         const objGrafico = {
 
             title: {
-                text: 'Velocidade média',
+                text: 'Velocidade x Tempo',
                 style: {
                     fontSize: '16px',
                     color: '#404040',
@@ -279,7 +323,7 @@ export class GraficosInclinadoComponent implements OnInit {
             },
 
             legend: {
-                enabled: false,
+                enabled: true,
                 // layout: 'vertical',
                 // align: 'right',
                 // verticalAlign: 'middle'
@@ -317,6 +361,7 @@ export class GraficosInclinadoComponent implements OnInit {
 
         // Tamanho da lista com as medidas
         const max = this.inclinado.length;
+        let acMedia = 0;
 
         // Monta lista com os cálculos da velocidade média
         for (let i = 0; i < max; i++) {
@@ -332,12 +377,50 @@ export class GraficosInclinadoComponent implements OnInit {
 
             // Adiciona o ponto na lista
             this.listaVelocidade.push(point);
+
+            // Aceleração
+            let aceleracao: number;
+
+
+            aceleracao = (i === 0
+                ? this.formulasService.aceleracaoMedia(0, this.listaVelocidade[i][1], 0, this.inclinado[i].tempo)
+                : this.formulasService.aceleracaoMedia(this.listaVelocidade[i - 1][1], this.listaVelocidade[i][1],
+                    this.inclinado[i - 1].tempo, this.inclinado[i].tempo));
+
+            acMedia += aceleracao;
+        }
+
+        acMedia = acMedia / 4;
+
+        // Calcula a velocidade teórica
+        for (let i = 0; i < max; i++) {
+
+            // Ponto do gráfio
+            const pointTeorico = [];
+
+            // Adiciona o tempo ao ponto
+            pointTeorico.push(this.inclinado[i].tempo);
+
+            // Velocidade
+            const vel = this.formulasService.velocidadeMUV(this.listaVelocidade[i][1], acMedia, this.inclinado[i].tempo);
+
+            // Adicona velocidade ao ponto
+            pointTeorico.push(vel);
+
+            // Adiciona ponto na lista
+            this.listaVelocidadeToerico.push(pointTeorico);
         }
 
         // Adiciona os dados no objeto do gráfico
         objGrafico.series.push({
-            name: 'Velocidade média',
+            name: 'Prático',
             data: this.listaVelocidade
+        });
+
+        // Adiciona os dados teóricos no gráfico
+        objGrafico.series.push({
+            name: 'Teórico',
+            data: this.listaVelocidadeToerico
         });
         // console.log('Velocidade média: ', this.listaVelocidade);
 
@@ -355,7 +438,7 @@ export class GraficosInclinadoComponent implements OnInit {
         const objGrafico = {
 
             title: {
-                text: 'Aceleração média',
+                text: 'Aceleração x Tempo',
                 style: {
                     fontSize: '16px',
                     color: '#404040',
@@ -473,13 +556,15 @@ export class GraficosInclinadoComponent implements OnInit {
         this.aceleracaoMedia = this.aceleracaoMedia / this.listaAceleracao.length;
         // console.log('Lista aceleração: ', this.listaAceleracao);
 
-        // Adiciona os dados no objeto do gráfico
+        // Adiciona os dados práticos no objeto do gráfico
         objGrafico.series.push({
-            name: 'Aceleração média',
+            name: 'Prático',
             data: this.listaAceleracao
         });
+
+        // Adiciona os dados teóricos no objeto do gráfico
         objGrafico.series.push({
-            name: 'Média',
+            name: 'Teórico',
             data: [[this.inclinado[0].tempo, this.aceleracaoMedia], [this.inclinado[3].tempo, this.aceleracaoMedia]]
         });
 
